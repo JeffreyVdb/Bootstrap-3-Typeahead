@@ -47,21 +47,23 @@
   * ================================= */
 
   var Typeahead = function (element, options) {
-    this.$element = $(element);
-    this.options = $.extend({}, $.fn.typeahead.defaults, options);
-    this.matcher = this.options.matcher || this.matcher;
-    this.sorter = this.options.sorter || this.sorter;
-    this.select = this.options.select || this.select;
-    this.autoSelect = typeof this.options.autoSelect == 'boolean' ? this.options.autoSelect : true;
-    this.highlighter = this.options.highlighter || this.highlighter;
-    this.render = this.options.render || this.render;
-    this.updater = this.options.updater || this.updater;
-    this.source = this.options.source;
-    this.delay = typeof this.options.delay == 'number' ? this.options.delay : 250;
-    this.$menu = $(this.options.menu);
-    this.shown = false;
-    this.listen();
-    this.showHintOnFocus = typeof this.options.showHintOnFocus == 'boolean' ? this.options.showHintOnFocus : false;
+    var that = this;
+    that.$element = $(element);
+    that.options = $.extend({}, $.fn.typeahead.defaults, options);
+    that.matcher = that.options.matcher || that.matcher;
+    that.sorter = that.options.sorter || that.sorter;
+    that.select = that.options.select || that.select;
+    that.autoSelect = typeof that.options.autoSelect == 'boolean' ? that.options.autoSelect : true;
+    that.highlighter = that.options.highlighter || that.highlighter;
+    that.render = that.options.render || that.render;
+    that.updater = that.options.updater || that.updater;
+    that.source = that.options.source;
+    that.delay = typeof that.options.delay == 'number' ? that.options.delay : 250;
+    that.$menu = $(that.options.menu);
+    that.shown = false;
+    that.listen();
+    that.autocompleteTriggers = that.options.autocompleteTriggers || [9, 13];
+    that.showHintOnFocus = typeof that.options.showHintOnFocus == 'boolean' ? that.options.showHintOnFocus : false;
   };
 
   Typeahead.prototype = {
@@ -298,18 +300,20 @@
     }
 
   , keyup: function (e) {
-      switch(e.keyCode) {
+    var kCode = e.keyCode;
+
+    // Autocomplete triggers?
+    if (this.autocompleteTriggers.indexOf(kCode) !== -1) {
+      if (!this.shown) return;
+      this.select();
+    }
+    else {
+      switch(kCode) {
         case 40: // down arrow
         case 38: // up arrow
         case 16: // shift
         case 17: // ctrl
         case 18: // alt
-          break;
-
-        case 9: // tab
-        case 13: // enter
-          if (!this.shown) return;
-          this.select();
           break;
 
         case 27: // escape
@@ -319,6 +323,8 @@
         default:
           this.lookup();
       }
+
+    }
 
       e.stopPropagation();
       e.preventDefault();
