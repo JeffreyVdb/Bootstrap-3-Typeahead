@@ -1,8 +1,8 @@
 {
   "name": "bootstrap3-typeahead-extended",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "authors": [
-    "Jeffrey Vandenborne"
+    "Jeffrey Vandenborne",
     "bassjobsen"
   ],
   "main": [
